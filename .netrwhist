@@ -1,5 +1,5 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_cnt =9
 let g:netrw_dirhist_1='/home/joe/Dropbox/LibG/include/G/Graphics/2D'
 let g:netrw_dirhist_2='/home/joe/.vim/autoload'
 let g:netrw_dirhist_3='/home/joe/Dropbox/LibG_Old'
@@ -8,3 +8,4 @@ let g:netrw_dirhist_5='/home/joe/.config/awesome'
 let g:netrw_dirhist_6='/usr/share/xsessions'
 let g:netrw_dirhist_7='/home/ginto/2013Test/2013test'
 let g:netrw_dirhist_8='/home/ginto/2013Test/robotbuilder'
+let g:netrw_dirhist_9='/home/ginto/Dropbox/NXC/FirstChallenge'
