@@ -1,15 +1,4 @@
-" URL: http://vim.wikia.com/wiki/Example_vimrc
-" Authors: http://vim.wikia.com/wiki/Vim_on_Freenode
-" Description: A minimal, but feature rich, example .vimrc. If you are a
-"              newbie, basing your first .vimrc on this file is a good choice.
-"              If you're a more advanced user, building your own .vimrc based
-"              on this file is still a good idea.
-
-"------------------------------------------------------------
-" Features {{{1
-"
-" These options and commands enable some very useful features in Vim, that
-" no user should have to live without.
+" .vimrc of Joe Doyle (Ginto8)
 
 " Set 'nocompatible' to ward off unexpected things that your distro might
 " have made, as well as sanely reset options when re-sourcing .vimrc
@@ -17,8 +6,46 @@ set nocompatible
 
 au!
 
-" Automatically re-source .vimrc on save
-au BufWritePost .vimrc source ~/.vimrc
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'fugitive', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'fugitive': 'MyFugitive',
+      \   'readonly': 'MyReadonly',
+      \   'modified': 'MyModified'
+      \ }
+      \ }
+
+function! MyModified()
+  if &filetype == "help"
+    return ""
+  elseif &modified
+    return "+"
+  elseif &modifiable
+    return ""
+  else
+    return ""
+  endif
+endfunction
+
+function! MyReadonly()
+  if &filetype == "help"
+    return ""
+  elseif &readonly
+    return "x"
+  else
+    return ""
+  endif
+endfunction
+
+function! MyFugitive()
+  return exists('*fugitive#head') ? fugitive#head() : ''
+endfunction
+
+execute pathogen#infect()
 
 " Attempt to determine the type of a file based on its name and possibly its
 " contents.  Use this to allow intelligent auto-indenting for each filetype,
@@ -28,11 +55,6 @@ filetype indent plugin on
 " Enable syntax highlighting
 syntax on
 
-
-"------------------------------------------------------------
-" Must have options {{{1
-"
-" These are highly recommended options.
 
 " One of the most important options to activate. Allows you to switch from an
 " unsaved buffer without saving it first. Also allows you to keep an undo
@@ -60,15 +82,6 @@ set hlsearch
 " such, it may be a good idea to disable them and use the securemodelines
 " script, <http://www.vim.org/scripts/script.php?script_id=1876>.
 " set nomodeline
-
-
-"------------------------------------------------------------
-" Usability options {{{1
-"
-" These are options that users frequently set in their .vimrc. Some of them
-" change Vim's behaviour in ways which deviate from the true Vi way, but
-" which are considered to add usability. Which, if any, of these options to
-" use is very much a personal preference, but they are harmless.
 
 " Use case insensitive search, except when using capital letters
 set ignorecase
@@ -129,8 +142,6 @@ let mapleader=';'
 " Since I always accidentally hit this
 noremap <F1> <nop>
 inoremap <F1> <nop>
-unmap <F1>
-iunmap <F1>
 
 " Use <F1> to toggle between 'paste' and 'nopaste'
 set pastetoggle=<F1>
@@ -187,12 +198,7 @@ nnoremap <Leader>f {gq}
 " 256 colors
 " set t_Co=256
 
-"------------------------------------------------------------
-" Indentation options {{{1
-"
-" Indentation settings according to personal preference.
-
-" Indentation settings for using 2 spaces instead of tabs.
+" Indentation settings for using 4 spaces instead of tabs.
 " Do not change 'tabstop' from its default value of 8 with this setup.
 set shiftwidth=4
 set softtabstop=4
@@ -211,11 +217,6 @@ noremap <Leader>c :! wc -w %<CR>
 noremap <Leader>a :A<CR>
 inoremap <Leader>a <Esc>:A<CR>a
 
-"------------------------------------------------------------
-" Mappings {{{1
-"
-" Useful mappings
-
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
 map Y y$
@@ -231,8 +232,6 @@ let g:miniBufExplMapWindowNavArrows = 1
 let g:miniBufExplMapCTabSwitchBufs = 1
 let g:miniBufExplModSelTarget = 1
 
-"------------------------------------------------------------
-
 " Highlight trailing whitespace
 highlight eolWS ctermbg=Red guibg=Red
 match eolWS /\s\+$/
@@ -247,19 +246,17 @@ au BufEnter *.tex setl tw=70
 set clipboard=unnamed
 
 au BufNewFile,BufRead *.hpp,*.cpp set syntax=cpp11 ft=cpp11 cindent
-au BufNewFile,BufRead *.h,*.c,*.hpp,*.cpp call setCBuild()
 
 noremap <Leader>m :! ~/.vim/build.sh "%"<CR>
 inoremap <Leader>m <Esc>:! ~/.vim/build.sh "%"<CR>a
 noremap <Leader>r :! ~/.vim/build.sh "%" r<CR>
 inoremap <Leader>r <Esc>:! ~/.vim/build.sh "%" r<CR>a
 
-execute pathogen#infect()
-
 colorscheme Dim
 
 set nocursorline
 
-let g:lightline = {
-      \ 'colorscheme':'wombat',
-      \ }
+" Automatically re-source .vimrc on save
+au BufWritePost .vimrc so ~/.vimrc
+" Hack to prevent the above autocmd from fucking up lightline
+execute lightline#colorscheme()
