@@ -114,7 +114,7 @@ set mouse=a
 
 " Set the command window height to 2 lines, to avoid many cases of having to
 " "press <Enter> to continue"
-set cmdheight=2
+"set cmdheight=2
 
 " Display line numbers on the left
 set number
@@ -168,6 +168,8 @@ noremap <Leader>w :w<CR>
 inoremap <Leader>w <Esc>:w<CR>a
 noremap <Leader>q :q<CR>
 inoremap <Leader>q <Esc>:q<CR>a
+noremap <Leader>qa :qa<CR>
+inoremap <Leader>qa <Esc>:qa<CR>
 noremap <Leader>d :bd<CR>
 inoremap <Leader>d <Esc>:bd<CR>a
 noremap <Leader>l :nohl<CR><C-L>
@@ -249,9 +251,15 @@ au BufNewFile,BufRead *.h,*.c,*.hpp,*.cpp call setCBuild()
 
 noremap <Leader>m :! ~/.vim/build.sh "%"<CR>
 inoremap <Leader>m <Esc>:! ~/.vim/build.sh "%"<CR>a
+noremap <Leader>r :! ~/.vim/build.sh "%" r<CR>
+inoremap <Leader>r <Esc>:! ~/.vim/build.sh "%" r<CR>a
 
 execute pathogen#infect()
 
 colorscheme Dim
 
 set nocursorline
+
+let g:lightline = {
+      \ 'colorscheme':'wombat',
+      \ }
