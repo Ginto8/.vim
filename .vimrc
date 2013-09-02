@@ -132,8 +132,7 @@ set mouse=a
 " Display line numbers on the left
 set number
 
-" Quickly time out on keycodes, but never time out on mappings
-" set notimeout ttimeout ttimeoutlen=200
+set timeout ttimeout
 set timeoutlen=400 ttimeoutlen=400
 
 " New leader
@@ -170,6 +169,12 @@ imap <C-j> <C-o>j
 imap <C-k> <C-o>k
 imap <C-l> <C-o>l
 
+" Easy window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
 " Movement is visual
 map j gj
 map k gk
@@ -177,14 +182,22 @@ map k gk
 " quick-saving/quitting
 noremap <Leader>w :w<CR>
 inoremap <Leader>w <Esc>:w<CR>a
+noremap <Leader>wa :wa<CR>
+inoremap <Leader>wa <Esc>:wa<CR>a
 noremap <Leader>q :q<CR>
 inoremap <Leader>q <Esc>:q<CR>a
 noremap <Leader>qa :qa<CR>
 inoremap <Leader>qa <Esc>:qa<CR>
+noremap <Leader>wq :wq<CR>
+inoremap <Leader>wq <Esc>:wq<CR>a
+noremap <Leader>wqa :wqa<CR>
+inoremap <Leader>wqa <Esc>:wqa<CR>a
 noremap <Leader>d :bd<CR>
 inoremap <Leader>d <Esc>:bd<CR>a
 noremap <Leader>l :nohl<CR><C-L>
 inoremap <Leader>l <Esc>:nohl<CR><C-L>a
+noremap <Leader>t :clo<CR>
+inoremap <Leader>t <Esc>:clo<CR>a
 
 " Buffer navigation
 noremap <Leader>k :bn<CR>
@@ -217,13 +230,25 @@ noremap <Leader>c :! wc -w %<CR>
 noremap <Leader>a :A<CR>
 inoremap <Leader>a <Esc>:A<CR>a
 
+" fugitive mappings
+noremap <Leader>gs :Gstatus<CR>
+inoremap <Leader>gs <Esc>:Gstatus<CR>a
+noremap <Leader>gc :Gcommit<CR>
+inoremap <Leader>gc <Esc>:Gcommit<CR>a
+noremap <Leader>gw :Gwrite<CR>
+inoremap <Leader>gw <Esc>:Gwrite<CR>a
+noremap <Leader>gr :Gremove<CR>
+inoremap <Leader>gr <Esc>:Gremove<CR>a
+noremap <Leader>gk :! (cd "$(dirname %)";gitk)<CR>
+inoremap <Leader>gk <Esc>:! (cd "$(dirname %)";gitk)<CR>a
+
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
 map Y y$
 
 " Map <C-L> (redraw screen) to also turn off search highlighting until the
 " next search
-nnoremap <C-L> :nohl<CR><C-L>
+" nnoremap <C-L> :nohl<CR><C-L>
 
 map ~ :NERDTreeToggle<CR>
 
@@ -243,7 +268,11 @@ autocmd BufWinLeave * call clearmatches()
 au BufEnter *.tex setl tw=70
 
 " System clipboard!
-set clipboard=unnamed
+" set clipboard=unnamed
+noremap <Leader>p "*p
+inoremap <Leader>p <Esc>"*pa
+noremap <Leader>P "*P
+inoremap <Leader>P <Esc>"*Pa
 
 au BufNewFile,BufRead *.hpp,*.cpp set syntax=cpp11 ft=cpp11 cindent
 
@@ -252,11 +281,20 @@ inoremap <Leader>m <Esc>:! ~/.vim/build.sh "%"<CR>a
 noremap <Leader>r :! ~/.vim/build.sh "%" r<CR>
 inoremap <Leader>r <Esc>:! ~/.vim/build.sh "%" r<CR>a
 
+" Automatic brackets
+inoremap {<CR> {<CR>}<Esc>O
+
 colorscheme Dim
 
 set nocursorline
 
+" make <CR> in normal mode behave the way I expect it to
+nmap <CR> j
+
 " Automatically re-source .vimrc on save
 au BufWritePost .vimrc so ~/.vimrc
 " Hack to prevent the above autocmd from fucking up lightline
-execute lightline#colorscheme()
+if exists('g:resourced')
+    execute lightline#colorscheme()
+endif
+let g:resourced=1
