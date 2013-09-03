@@ -288,9 +288,6 @@ colorscheme Dim
 
 set nocursorline
 
-" make <CR> in normal mode behave the way I expect it to
-nmap <CR> j
-
 " Automatically re-source .vimrc on save
 au BufWritePost .vimrc so ~/.vimrc
 " Hack to prevent the above autocmd from fucking up lightline
@@ -298,3 +295,6 @@ if exists('g:resourced')
     execute lightline#colorscheme()
 endif
 let g:resourced=1
+
+" make <CR> in normal mode behave the way I expect it to
+au BufNewFile,BufRead * map <CR> j
