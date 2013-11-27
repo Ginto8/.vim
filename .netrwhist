@@ -1,3 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
+let g:netrw_dirhist_cnt =6
 let g:netrw_dirhist_1='/home/ginto/Dropbox/JackOfClubs'
+let g:netrw_dirhist_2='/home/ginto/Dropbox/workspace/PhotobombDefuser/.settings'
+let g:netrw_dirhist_3='/etc/apache2/sites-enabled'
+let g:netrw_dirhist_4='/home/evan'
+let g:netrw_dirhist_5='/home/ginto/Dropbox/Storm2013/build'
+let g:netrw_dirhist_6='/home/ginto/Downloads/xmonad-contrib-0.11.2/XMonad/Prompt'

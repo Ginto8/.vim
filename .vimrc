@@ -6,6 +6,44 @@ set nocompatible
 
 au!
 
+" Setting up Vundle - the vim plugin bundler
+    let iCanHazVundle=1
+    let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+    if !filereadable(vundle_readme)
+        echo "Installing Vundle.."
+        echo ""
+        silent !mkdir -p ~/.vim/bundle
+        silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+        let iCanHazVundle=0
+    endif
+    set rtp+=~/.vim/bundle/vundle/
+    call vundle#rc()
+    Bundle 'gmarik/vundle'
+    "Add your bundles here
+    "uber awesome syntax and errors highlighter
+    Bundle 'Syntastic'
+    "Bundle 'altercation/vim-colors-solarized' "T-H-E colorscheme
+    "So awesome, it should be illegal 
+    Bundle 'tpope/vim-fugitive'
+    "...All your other bundles...
+    Bundle 'a.vim'
+    Bundle 'minibufexpl.vim'
+    Bundle 'surrparen'
+    Bundle 'The-NERD-tree'
+    Bundle 'The-NERD-Commenter'
+    Bundle 'itchyny/lightline.vim'
+    Bundle 'Markdown'
+    Bundle 'javacomplete'
+    Bundle 'eagletmt/ghcmod-vim'
+    Bundle 'Shougo/vimproc.vim'
+    "Bundle 'Valloric/YouCompleteMe'
+    if iCanHazVundle == 0
+        echo "Installing Bundles, please ignore key map error messages"
+        echo ""
+        :BundleInstall
+    endif
+" Setting up Vundle - the vim plugin bundler end
+
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
@@ -206,6 +244,7 @@ noremap <Leader>j :bp<CR>
 inoremap <Leader>j <Esc>:bp<CR>a
 
 " quick formatting
+noremap <Leader>f gq
 nnoremap <Leader>f {gq}
 
 " 256 colors
@@ -216,6 +255,11 @@ nnoremap <Leader>f {gq}
 set shiftwidth=4
 set softtabstop=4
 set expandtab
+set shiftround
+
+function! ProjectExe(command)
+    execute ":! ~/.vim/project-exec.sh \"%\" \"" . a:command . "\""
+endfunction
 
 " Indentation settings for using hard tabs for indent. Display tabs as
 " two characters wide.
@@ -225,6 +269,9 @@ set expandtab
 " Word count, TeX and non
 noremap <Leader>tc :! detex % \| wc -w<CR>
 noremap <Leader>c :! wc -w %<CR>
+
+" Spell-checking
+noremap <Leader>sp :set spell!<CR>
 
 " Switch header/source
 noremap <Leader>a :A<CR>
@@ -239,8 +286,8 @@ noremap <Leader>gw :Gwrite<CR>
 inoremap <Leader>gw <Esc>:Gwrite<CR>a
 noremap <Leader>gr :Gremove<CR>
 inoremap <Leader>gr <Esc>:Gremove<CR>a
-noremap <Leader>gk :! (cd "$(dirname %)";gitk)<CR>
-inoremap <Leader>gk <Esc>:! (cd "$(dirname %)";gitk)<CR>a
+noremap <Leader>gk :call ProjectExe("gitk")<CR>
+inoremap <Leader>gk <Esc>:call ProjectExe("gitk")<CR>a
 
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
@@ -275,11 +322,14 @@ noremap <Leader>P "*P
 inoremap <Leader>P <Esc>"*Pa
 
 au BufNewFile,BufRead *.hpp,*.cpp set syntax=cpp11 ft=cpp11 cindent
+au BufNewFile,BufRead *.hpp,*.cpp,*.h,*.c map <buffer> <Leader>f {=}
 
-noremap <Leader>m :! ~/.vim/build.sh "%"<CR>
-inoremap <Leader>m <Esc>:! ~/.vim/build.sh "%"<CR>a
-noremap <Leader>r :! ~/.vim/build.sh "%" r<CR>
-inoremap <Leader>r <Esc>:! ~/.vim/build.sh "%" r<CR>a
+command! Build :call ProjectExe("$HOME/.vim/build.sh")
+command! Run   :call ProjectExe("$HOME/.vim/build.sh r")
+noremap <Leader>m :Build<CR>
+inoremap <Leader>m <Esc><Leader>m<CR>a
+noremap <Leader>r :Run<CR>
+inoremap <Leader>r <Esc><Leader>r<CR>a
 
 " Automatic brackets
 inoremap {<CR> {<CR>}<Esc>O
@@ -298,3 +348,5 @@ let g:resourced=1
 
 " make <CR> in normal mode behave the way I expect it to
 au BufNewFile,BufRead * map <CR> j
+
+au FileType haskell nnoremap <buffer> <Leader>s :GhcModType<CR>

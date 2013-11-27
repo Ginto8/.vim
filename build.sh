@@ -1,61 +1,55 @@
 #!/bin/bash
 
-oldwd=$(pwd)
-dir=$(dirname "$(readlink -m $1)")
-projdir=$dir/
-folder=$(basename "$dir")
-file=$(basename "$1")
-name=${file%.*}
-extension=${file##*.}
-term=${TERM%-*}
-if [[ $projdir =~ /src/ ]]; then
-    projdir=${projdir%/src/*}/
-elif [[ $projdir =~ /include/ ]]; then
-    projdir=${projdir%/include/*}/
-fi
-runCommand="@"
-if [[ $term == screen ]]; then
-    if [[ -n $TMUX ]]; then
-        runCommand="tmux new-window 'bash -c \"@ || read\"'"
-    fi
-fi
-#echo "Run command: $runCommand (eg. ${runCommand/@/./test.sh})"
-echo "project: $projdir"
 command=""
-if [[ $2 == r ]]; then
+if [[ $1 == r ]]; then
     if [[ -e $projdir/CMakeLists.txt ]]; then
         cd "$projdir/build"
         binName="$(grep 'set(EXECUTABLE_NAME' ../CMakeLists.txt |
-                   sed 's/set(EXECUTABLE_NAME "\(.*\)")/\1/')"
+                   sed 's/set(EXECUTABLE_NAME \"\(.*\)\")/\1/')"
         command="./$binName"
     elif [[ -e $projdir/build.xml ]]; then
-        cd $projdir
         command="ant run"
     else
-        cd $dir
-        if [[ $extension == c ]] ||
-           [[ $extension == h ]] ||
-           [[ $extension == hpp ]] ||
-           [[ $extension == cpp ]]; then
-            [[ -e $name ]] && command="./$name"
-        elif [[ $extension == tex ]]; then
+        case $extension in
+        c | h | hpp | cpp )
+            [[ -e ./$name ]] && command="./$name"
+            ;;
+        tex )
             [[ -e $name.pdf ]] && command="evince $name.pdf"
-        elif [[ $extension == py ]]; then
+            ;;
+        py )
             command="python $file"
-        elif [[ $extension == sh ]]; then
+            ;;
+        sh )
             command="./$file"
-        fi
+            ;;
+        hs )
+            command="./$name"
+            ;;
+        esac
     fi
-    toRun=${runCommand/@/$command}
-    bash -c "$toRun"
+    if [[ -z $command ]]; then
+        echo ERROR: executable for $file not found
+    else
+        toRun=${runCommand/@/$command}
+        #echo "running: " $toRun
+        bash -c "$toRun"
+    fi
 else
+    (which clang &>/dev/null && CC=clang) || CC=gcc
+    (which clang++ &>/dev/null && CXX=clang) || CXX="g++ -std=c++0x"
+    CC="$CC   -Wall"
+    CXX="$CXX -Wall"
+    export CC
+    export CXX
     if [[ -e $projdir/CMakeLists.txt ]]; then
         cd "$projdir"
         if [[ ! -e build ]]; then
             mkdir build
         fi
         cd build
-        [[ ! -e Makefile ]] && CC=clang CXX=clang++ cmake ..
+        [[ ! -e Makefile ]] && cmake ..
+        echo "$projdir"
         make
     elif [[ -e $projdir/build.xml ]]; then
         cd $projdir
@@ -66,23 +60,30 @@ else
         fi
     else
         cd $dir
-        if [[ $extension == c ]]; then
-            clang -o "$name" "$file"
-        elif [[ $extension == cpp ]]; then
-            clang++ -o "$name" "$file"
-        elif [[ $extension == hpp ]]; then
-            [[ -e $name.cpp ]] && clang++ -o "$name" "$name.cpp"
-        elif [[ $extension == h ]]; then
+        case $extension in
+        c )
+            $CC -o "$name" "$file"
+            ;;
+        cpp )
+            $CXX -o "$name" "$file"
+            ;;
+        hpp )
+            [[ -e $name.cpp ]] && $CXX -o "$name" "$name.cpp"
+            ;;
+        h )
             if [[ -e $name.c ]]; then
-                clang -o "$name" "$name.c"
+                $CC -o "$name" "$name.c"
             elif [[ -e $name.cpp ]]; then
-                clang++ -o "$name" "$name.cpp"
+                $CXX -o "$name" "$name.cpp"
             fi
-        elif [[ $extension == tex ]]; then
+            ;;
+        tex )
             build-latex "$name"
-        fi
+            ;;
+        hs )
+            ghc "$file"
+            ;;
+        esac
     fi
 fi
-
-cd "$oldwd"
 
