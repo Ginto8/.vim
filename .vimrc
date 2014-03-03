@@ -30,12 +30,16 @@ au!
     Bundle 'minibufexpl.vim'
     Bundle 'surrparen'
     Bundle 'The-NERD-tree'
-    Bundle 'The-NERD-Commenter'
+    Bundle 'scrooloose/nerdcommenter'
     Bundle 'itchyny/lightline.vim'
     Bundle 'Markdown'
     Bundle 'javacomplete'
     Bundle 'eagletmt/ghcmod-vim'
     Bundle 'Shougo/vimproc.vim'
+    Bundle 'tommcdo/vim-lion'
+    Bundle 'osyo-manga/vim-over'
+    Bundle 'goldfeld/vim-seek'
+    Bundle 'Rip-Rip/clang_complete'
     "Bundle 'Valloric/YouCompleteMe'
     if iCanHazVundle == 0
         echo "Installing Bundles, please ignore key map error messages"
@@ -83,7 +87,7 @@ function! MyFugitive()
   return exists('*fugitive#head') ? fugitive#head() : ''
 endfunction
 
-execute pathogen#infect()
+" execute pathogen#infect()
 
 " Attempt to determine the type of a file based on its name and possibly its
 " contents.  Use this to allow intelligent auto-indenting for each filetype,
@@ -202,10 +206,14 @@ noremap H ^
 noremap L $
 
 " Insert mode home-row movement
-imap <C-h> <C-o>h
-imap <C-j> <C-o>j
-imap <C-k> <C-o>k
-imap <C-l> <C-o>l
+imap <C-h> <Left>
+imap <C-j> <Down>
+imap <C-k> <Up>
+imap <C-l> <Right>
+" imap <C-h> <C-o>h
+" imap <C-j> <C-o>j
+" imap <C-k> <C-o>k
+" imap <C-l> <C-o>l
 
 " Easy window navigation
 nnoremap <C-h> <C-w>h
@@ -286,8 +294,8 @@ noremap <Leader>gw :Gwrite<CR>
 inoremap <Leader>gw <Esc>:Gwrite<CR>a
 noremap <Leader>gr :Gremove<CR>
 inoremap <Leader>gr <Esc>:Gremove<CR>a
-noremap <Leader>gk :call ProjectExe("gitk")<CR>
-inoremap <Leader>gk <Esc>:call ProjectExe("gitk")<CR>a
+noremap <Leader>gk :call ProjectExe("gitk &")<CR>
+inoremap <Leader>gk <Esc><Leader>gka
 
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
@@ -307,10 +315,10 @@ let g:miniBufExplModSelTarget = 1
 " Highlight trailing whitespace
 highlight eolWS ctermbg=Red guibg=Red
 match eolWS /\s\+$/
-autocmd BufWinEnter * match eolWS /\s\+$/
-autocmd InsertEnter * match eolWS /\s\+\%#\#<!$/
-autocmd InsertLeave * match eolWS /\s\+$/
-autocmd BufWinLeave * call clearmatches()
+au! BufWinEnter * match eolWS /\s\+$/
+au! InsertEnter * match eolWS /\s\+\%#\#<!$/
+au! InsertLeave * match eolWS /\s\+$/
+au! BufWinLeave * call clearmatches()
 
 au BufEnter *.tex setl tw=70
 
@@ -327,9 +335,14 @@ au BufNewFile,BufRead *.hpp,*.cpp,*.h,*.c map <buffer> <Leader>f {=}
 command! Build :call ProjectExe("$HOME/.vim/build.sh")
 command! Run   :call ProjectExe("$HOME/.vim/build.sh r")
 noremap <Leader>m :Build<CR>
-inoremap <Leader>m <Esc><Leader>m<CR>a
+inoremap <Leader>m <Esc>:Build<CR>a
 noremap <Leader>r :Run<CR>
-inoremap <Leader>r <Esc><Leader>r<CR>a
+inoremap <Leader>r <Esc>:Run<CR>a
+
+" Relative line number toggle
+set relativenumber
+noremap <Leader>i :set relativenumber!<CR>
+inoremap <Leader>i <Esc>:set relativenumber!<CR>a
 
 " Automatic brackets
 inoremap {<CR> {<CR>}<Esc>O
@@ -340,7 +353,7 @@ set nocursorline
 
 " Automatically re-source .vimrc on save
 au BufWritePost .vimrc so ~/.vimrc
-" Hack to prevent the above autocmd from fucking up lightline
+" Hack to prevent the above au! from fucking up lightline
 if exists('g:resourced')
     execute lightline#colorscheme()
 endif
@@ -350,3 +363,10 @@ let g:resourced=1
 au BufNewFile,BufRead * map <CR> j
 
 au FileType haskell nnoremap <buffer> <Leader>s :GhcModType<CR>
+
+let g:clang_close_preview=1
+set completeopt=menu,menuone,longest
+set pumheight=15
+
+imap <Leader><Tab> <C-X><C-U>
+let g:clang_user_options="-std=c++11"

@@ -36,20 +36,25 @@ if [[ $1 == r ]]; then
         bash -c "$toRun"
     fi
 else
-    (which clang &>/dev/null && CC=clang) || CC=gcc
-    (which clang++ &>/dev/null && CXX=clang) || CXX="g++ -std=c++0x"
-    CC="$CC   -Wall"
-    CXX="$CXX -Wall"
-    export CC
-    export CXX
+    if which clang &>/dev/null; then
+        export CC=clang
+    else
+        export CC=gcc
+    fi
+    if which clang++ &>/dev/null; then
+        export CXX=clang++
+    else
+        export CXX=g++
+    fi
     if [[ -e $projdir/CMakeLists.txt ]]; then
         cd "$projdir"
         if [[ ! -e build ]]; then
             mkdir build
         fi
         cd build
-        [[ ! -e Makefile ]] && cmake ..
-        echo "$projdir"
+        if [[ ! -e Makefile ]]; then
+            cmake ..
+        fi
         make
     elif [[ -e $projdir/build.xml ]]; then
         cd $projdir
@@ -62,19 +67,19 @@ else
         cd $dir
         case $extension in
         c )
-            $CC -o "$name" "$file"
+            $CC -Wall -o "$name" "$file"
             ;;
         cpp )
-            $CXX -o "$name" "$file"
+            $CXX -Wall -o "$name" "$file"
             ;;
         hpp )
             [[ -e $name.cpp ]] && $CXX -o "$name" "$name.cpp"
             ;;
         h )
             if [[ -e $name.c ]]; then
-                $CC -o "$name" "$name.c"
+                $CC -Wall -o "$name" "$name.c"
             elif [[ -e $name.cpp ]]; then
-                $CXX -o "$name" "$name.cpp"
+                $CXX -Wall -o "$name" "$name.cpp"
             fi
             ;;
         tex )
