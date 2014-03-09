@@ -6,7 +6,7 @@ set nocompatible
 
 au!
 
-" Setting up Vundle - the vim plugin bundler
+" Setting up Vundle
     let iCanHazVundle=1
     let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
     if !filereadable(vundle_readme)
@@ -22,7 +22,6 @@ au!
     "Add your bundles here
     "uber awesome syntax and errors highlighter
     Bundle 'Syntastic'
-    "Bundle 'altercation/vim-colors-solarized' "T-H-E colorscheme
     "So awesome, it should be illegal 
     Bundle 'tpope/vim-fugitive'
     "...All your other bundles...
@@ -87,14 +86,7 @@ function! MyFugitive()
   return exists('*fugitive#head') ? fugitive#head() : ''
 endfunction
 
-" execute pathogen#infect()
-
-" Attempt to determine the type of a file based on its name and possibly its
-" contents.  Use this to allow intelligent auto-indenting for each filetype,
-" and for plugins that are filetype specific.
 filetype indent plugin on
-
-" Enable syntax highlighting
 syntax on
 
 
@@ -104,26 +96,14 @@ syntax on
 " saving, and swap files will keep you safe if your computer crashes.
 set hidden
 
-" Note that not everyone likes working this way (with the hidden option).
-" Alternatives include using tabs or split windows instead of re-using the same
-" window for multiple buffers, and/or:
-" set confirm
-" set autowriteall
-
 " Better command-line completion
 set wildmenu
 
 " Show partial commands in the last line of the screen
 set showcmd
 
-" Highlight searches (use <C-L> to temporarily turn off highlighting; see the
-" mapping of <C-L> below)
+" Highlight searches
 set hlsearch
-
-" Modelines have historically been a source of security vulnerabilities.  As
-" such, it may be a good idea to disable them and use the securemodelines
-" script, <http://www.vim.org/scripts/script.php?script_id=1876>.
-" set nomodeline
 
 " Use case insensitive search, except when using capital letters
 set ignorecase
@@ -173,6 +153,12 @@ set mouse=a
 
 " Display line numbers on the left
 set number
+
+" Relative line number toggle
+set relativenumber
+noremap <Leader>i :set relativenumber!<CR>
+"inoremap <Leader>i <Esc>:set relativenumber!<CR>a
+
 
 set timeout ttimeout
 set timeoutlen=400 ttimeoutlen=400
@@ -247,9 +233,9 @@ inoremap <Leader>t <Esc>:clo<CR>a
 
 " Buffer navigation
 noremap <Leader>k :bn<CR>
-inoremap <Leader>k <Esc>:bn<CR>a
+"inoremap <Leader>k <Esc>:bn<CR>a
 noremap <Leader>j :bp<CR>
-inoremap <Leader>j <Esc>:bp<CR>a
+"inoremap <Leader>j <Esc>:bp<CR>a
 
 " quick formatting
 noremap <Leader>f gq
@@ -295,7 +281,7 @@ inoremap <Leader>gw <Esc>:Gwrite<CR>a
 noremap <Leader>gr :Gremove<CR>
 inoremap <Leader>gr <Esc>:Gremove<CR>a
 noremap <Leader>gk :call ProjectExe("gitk &")<CR>
-inoremap <Leader>gk <Esc><Leader>gka
+inoremap <Leader>gk <Esc>;gka
 
 " Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
 " which is the default
@@ -339,17 +325,13 @@ inoremap <Leader>m <Esc>:Build<CR>a
 noremap <Leader>r :Run<CR>
 inoremap <Leader>r <Esc>:Run<CR>a
 
-" Relative line number toggle
-set relativenumber
-noremap <Leader>i :set relativenumber!<CR>
-inoremap <Leader>i <Esc>:set relativenumber!<CR>a
-
 " Automatic brackets
 inoremap {<CR> {<CR>}<Esc>O
 
 colorscheme Dim
 
 set nocursorline
+"set cursorline
 
 " Automatically re-source .vimrc on save
 au BufWritePost .vimrc so ~/.vimrc
