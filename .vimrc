@@ -6,6 +6,15 @@ set nocompatible
 
 au!
 
+" Reload .vimrc automatically on save
+au BufWritePost .vimrc so ~/.vimrc
+" Hack to prevent the above au! from fucking up lightline
+if exists('g:resourced')
+    execute lightline#colorscheme()
+endif
+let g:resourced=1
+
+
 " Setting up Vundle
     let iCanHazVundle=1
     let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
@@ -87,94 +96,42 @@ function! MyFugitive()
   return exists('*fugitive#head') ? fugitive#head() : ''
 endfunction
 
+colorscheme Dim
+
 filetype indent plugin on
 syntax on
 
 
-" One of the most important options to activate. Allows you to switch from an
-" unsaved buffer without saving it first. Also allows you to keep an undo
-" history for multiple files. Vim will complain if you try to quit without
-" saving, and swap files will keep you safe if your computer crashes.
 set hidden
-
-" Better command-line completion
 set wildmenu
-
-" Show partial commands in the last line of the screen
 set showcmd
-
-" Highlight searches
 set hlsearch
+set ignorecase smartcase
+set backspace=indent,eol,start
+set autoindent nostartofline
+set ruler
+set laststatus=2
+set confirm
+set visualbell t_vb=
+set mouse=a
+set number relativenumber
+set timeout ttimeout
+set timeoutlen=400 ttimeoutlen=400
+set shiftwidth=4 softtabstop=4 expandtab shiftround
+set nocursorline
+set completeopt=menu,menuone,longest
+set pumheight=15
 
-" Use case insensitive search, except when using capital letters
-set ignorecase
-set smartcase
+let mapleader=';'
 
-" Use sane regexes
 nnoremap / /\v
 vnoremap / /\v
 
-" Allow backspacing over autoindent, line breaks and start of insert action
-set backspace=indent,eol,start
-
-" When opening a new line and no filetype-specific indenting is enabled, keep
-" the same indent as the line you're currently on. Useful for READMEs, etc.
-set autoindent
-
-" Stop certain movements from always going to the first character of a line.
-" While this behaviour deviates from that of Vi, it does what most users
-" coming from other editors would expect.
-set nostartofline
-
-" Display the cursor position on the last line of the screen or in the status
-" line of a window
-set ruler
-
-" Always display the status line, even if only one window is displayed
-set laststatus=2
-
-" Instead of failing a command because of unsaved changes, instead raise a
-" dialogue asking if you wish to save changed files.
-set confirm
-
-" Use visual bell instead of beeping when doing something wrong
-set visualbell
-
-" And reset the terminal code for the visual bell.  If visualbell is set, and
-" this line is also included, vim will neither flash nor beep.  If visualbell
-" is unset, this does nothing.
-set t_vb=
-
-" Enable use of the mouse for all modes
-set mouse=a
-
-" Set the command window height to 2 lines, to avoid many cases of having to
-" "press <Enter> to continue"
-"set cmdheight=2
-
-" Display line numbers on the left
-set number
-
-" Relative line number toggle
-set relativenumber
 noremap <Leader>i :set relativenumber!<CR>
-"inoremap <Leader>i <Esc>:set relativenumber!<CR>a
 
-
-set timeout ttimeout
-set timeoutlen=400 ttimeoutlen=400
-
-" New leader
-let mapleader=';'
-
-" Since I always accidentally hit this
 noremap <F1> <nop>
 inoremap <F1> <nop>
-
-" Use <F1> to toggle between 'paste' and 'nopaste'
 set pastetoggle=<F1>
-
-" Leave paste mode when you leave insert mode
 au InsertLeave * set nopaste
 
 " Better escape
@@ -185,10 +142,7 @@ noremap <Leader>n <Esc>
 vnoremap > >gv
 vnoremap < <gv
 
-" Redos!
 noremap U <C-R>
-
-" Beginning/End of line with home row
 noremap H ^
 noremap L $
 
@@ -197,10 +151,6 @@ imap <C-h> <Left>
 imap <C-j> <Down>
 imap <C-k> <Up>
 imap <C-l> <Right>
-" imap <C-h> <C-o>h
-" imap <C-j> <C-o>j
-" imap <C-k> <C-o>k
-" imap <C-l> <C-o>l
 
 " Easy window navigation
 nnoremap <C-h> <C-w>h
@@ -212,54 +162,40 @@ nnoremap <C-l> <C-w>l
 map j gj
 map k gk
 
+map Y y$
+
+map ~ :NERDTreeToggle<CR>
+
 " quick-saving/quitting
 noremap <Leader>w :w<CR>
 inoremap <Leader>w <Esc>:w<CR>a
 noremap <Leader>wa :wa<CR>
 inoremap <Leader>wa <Esc>:wa<CR>a
+
 noremap <Leader>q :q<CR>
 inoremap <Leader>q <Esc>:q<CR>a
 noremap <Leader>qa :qa<CR>
 inoremap <Leader>qa <Esc>:qa<CR>
+
 noremap <Leader>wq :wq<CR>
 inoremap <Leader>wq <Esc>:wq<CR>a
 noremap <Leader>wqa :wqa<CR>
 inoremap <Leader>wqa <Esc>:wqa<CR>a
+
 noremap <Leader>d :bd<CR>
 inoremap <Leader>d <Esc>:bd<CR>a
+
 noremap <Leader>l :nohl<CR><C-L>
 inoremap <Leader>l <Esc>:nohl<CR><C-L>a
+
 noremap <Leader>t :clo<CR>
 inoremap <Leader>t <Esc>:clo<CR>a
 
-" Buffer navigation
 noremap <Leader>k :bn<CR>
-"inoremap <Leader>k <Esc>:bn<CR>a
 noremap <Leader>j :bp<CR>
-"inoremap <Leader>j <Esc>:bp<CR>a
 
-" quick formatting
 noremap <Leader>f gq
 nnoremap <Leader>f {gq}
-
-" 256 colors
-" set t_Co=256
-
-" Indentation settings for using 4 spaces instead of tabs.
-" Do not change 'tabstop' from its default value of 8 with this setup.
-set shiftwidth=4
-set softtabstop=4
-set expandtab
-set shiftround
-
-function! ProjectExe(command)
-    execute ":! ~/.vim/project-exec.sh \"%\" \"" . a:command . "\""
-endfunction
-
-" Indentation settings for using hard tabs for indent. Display tabs as
-" two characters wide.
-"set shiftwidth=2
-"set tabstop=2
 
 " Word count, TeX and non
 noremap <Leader>tc :! detex % \| wc -w<CR>
@@ -274,30 +210,41 @@ inoremap <Leader>a <Esc>:A<CR>a
 
 " fugitive mappings
 noremap <Leader>gs :Gstatus<CR>
-inoremap <Leader>gs <Esc>:Gstatus<CR>a
+
 noremap <Leader>gc :Gcommit<CR>
-inoremap <Leader>gc <Esc>:Gcommit<CR>a
+
 noremap <Leader>gw :Gwrite<CR>
-inoremap <Leader>gw <Esc>:Gwrite<CR>a
+
 noremap <Leader>gr :Gremove<CR>
-inoremap <Leader>gr <Esc>:Gremove<CR>a
-noremap <Leader>gk :call ProjectExe("gitk &")<CR>
-inoremap <Leader>gk <Esc>;gka
 
-" Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
-" which is the default
-map Y y$
+noremap <Leader>gk :! tig<CR>
 
-" Map <C-L> (redraw screen) to also turn off search highlighting until the
-" next search
-" nnoremap <C-L> :nohl<CR><C-L>
+noremap <Leader>g :GitGutterToggle<CR>
 
-map ~ :NERDTreeToggle<CR>
+noremap <Leader>p "*p
+inoremap <Leader>p <Esc>"*pa
 
-let g:miniBufExplMapWindowNavVim = 1
-let g:miniBufExplMapWindowNavArrows = 1
-let g:miniBufExplMapCTabSwitchBufs = 1
-let g:miniBufExplModSelTarget = 1
+noremap <Leader>P "*P
+inoremap <Leader>P <Esc>"*Pa
+
+function! ProjectExe(command)
+    execute ":! ~/.vim/project-exec.sh \"%\" \"" . a:command . "\""
+endfunction
+
+command! Build :call ProjectExe("$HOME/.vim/build.sh")
+command! Run   :call ProjectExe("$HOME/.vim/build.sh r")
+
+noremap <Leader>m :Build<CR>
+inoremap <Leader>m <Esc>:Build<CR>a
+
+noremap <Leader>r :Run<CR>
+inoremap <Leader>r <Esc>:Run<CR>a
+
+" Automatic brackets
+inoremap {<CR> {<CR>}<Esc>O
+
+" Nicer completion prompting
+imap <Leader><Tab> <C-X><C-U>
 
 " Highlight trailing whitespace
 highlight eolWS ctermbg=Red guibg=Red
@@ -309,52 +256,22 @@ au! BufWinLeave * call clearmatches()
 
 au BufEnter *.tex setl tw=70
 
-" System clipboard!
-" set clipboard=unnamed
-noremap <Leader>p "*p
-inoremap <Leader>p <Esc>"*pa
-noremap <Leader>P "*P
-inoremap <Leader>P <Esc>"*Pa
-
 au BufNewFile,BufRead *.hpp,*.cpp set syntax=cpp11 ft=cpp11 cindent
 au BufNewFile,BufRead *.hpp,*.cpp,*.h,*.c map <buffer> <Leader>f {=}
 
-command! Build :call ProjectExe("$HOME/.vim/build.sh")
-command! Run   :call ProjectExe("$HOME/.vim/build.sh r")
-noremap <Leader>m :Build<CR>
-inoremap <Leader>m <Esc>:Build<CR>a
-noremap <Leader>r :Run<CR>
-inoremap <Leader>r <Esc>:Run<CR>a
-
-noremap <Leader>g :GitGutterToggle<CR>
-
-" Make gitgutter background same as line numbers
-highlight clear SignColumn
-
-" Automatic brackets
-inoremap {<CR> {<CR>}<Esc>O
-
-colorscheme Dim
-
-set nocursorline
-"set cursorline
-
-" Automatically re-source .vimrc on save
-au BufWritePost .vimrc so ~/.vimrc
-" Hack to prevent the above au! from fucking up lightline
-if exists('g:resourced')
-    execute lightline#colorscheme()
-endif
-let g:resourced=1
+au FileType haskell nnoremap <buffer> <Leader>s :GhcModType<CR>
 
 " make <CR> in normal mode behave the way I expect it to
 au BufNewFile,BufRead * map <CR> j
 
-au FileType haskell nnoremap <buffer> <Leader>s :GhcModType<CR>
+" Make gitgutter background same as line numbers
+highlight clear SignColumn
+
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplModSelTarget = 1
 
 let g:clang_close_preview=1
-set completeopt=menu,menuone,longest
-set pumheight=15
-
-imap <Leader><Tab> <C-X><C-U>
 let g:clang_user_options="-std=c++11"
+
