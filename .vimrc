@@ -39,6 +39,7 @@ au!
     Bundle 'osyo-manga/vim-over'
     Bundle 'goldfeld/vim-seek'
     Bundle 'Rip-Rip/clang_complete'
+    Bundle 'airblade/vim-gitgutter'
     "Bundle 'Valloric/YouCompleteMe'
     if iCanHazVundle == 0
         echo "Installing Bundles, please ignore key map error messages"
@@ -324,6 +325,11 @@ noremap <Leader>m :Build<CR>
 inoremap <Leader>m <Esc>:Build<CR>a
 noremap <Leader>r :Run<CR>
 inoremap <Leader>r <Esc>:Run<CR>a
+
+noremap <Leader>g :GitGutterToggle<CR>
+
+" Make gitgutter background same as line numbers
+highlight clear SignColumn
 
 " Automatic brackets
 inoremap {<CR> {<CR>}<Esc>O

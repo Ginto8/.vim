@@ -26,6 +26,9 @@ if [[ $1 == r ]]; then
         hs )
             command="./$name"
             ;;
+        md )
+            command="chromium `pwd`/${name}.html"
+            ;;
         esac
     fi
     if [[ -z $command ]]; then
@@ -87,6 +90,9 @@ else
             ;;
         hs )
             ghc "$file"
+            ;;
+        md )
+            markdown "$file" >"$name.html"
             ;;
         esac
     fi
