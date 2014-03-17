@@ -5,5 +5,5 @@ homedir=$1
 
 cd $homedir
 ln -s $vimdir .vim
-ln -s $homedir/.vim/.vimrc .vimrc
+ln -s ./.vim/.vimrc .vimrc
 
