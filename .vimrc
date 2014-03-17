@@ -31,14 +31,15 @@ let g:resourced=1
     "Add your bundles here
     "uber awesome syntax and errors highlighter
     Bundle 'Syntastic'
-    "So awesome, it should be illegal 
+    "Tim pope is a god.
     Bundle 'tpope/vim-fugitive'
+    Bundle 'tpope/vim-repeat'
+    Bundle 'tpope/vim-commentary'
     "...All your other bundles...
     Bundle 'a.vim'
     Bundle 'minibufexpl.vim'
     Bundle 'surrparen'
     Bundle 'The-NERD-tree'
-    Bundle 'scrooloose/nerdcommenter'
     Bundle 'itchyny/lightline.vim'
     Bundle 'Markdown'
     Bundle 'javacomplete'
