@@ -228,7 +228,7 @@ noremap <Leader>P "*P
 inoremap <Leader>P <Esc>"*Pa
 
 function! ProjectExe(command)
-    execute ":! ~/.vim/project-exec.sh \"%\" \"" . a:command . "\""
+    execute ":! $HOME/.vim/project-exec.sh \"%\" \"" . a:command . "\""
 endfunction
 
 command! Build :call ProjectExe("$HOME/.vim/build.sh")

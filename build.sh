@@ -63,7 +63,7 @@ else
         cd $projdir
         if [[ -n $TMUX ]]; then
             tmux new-window 'bash -c "ant deploy || read"'
-        else 
+        else
             ant deploy
         fi
     else
@@ -86,7 +86,7 @@ else
             fi
             ;;
         tex )
-            build-latex "$name"
+            $(dirname $0)/build-latex.sh "$name"
             ;;
         hs )
             ghc "$file"
